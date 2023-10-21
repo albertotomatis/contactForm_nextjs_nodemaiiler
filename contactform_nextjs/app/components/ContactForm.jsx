@@ -86,10 +86,27 @@ export default function ContactForm() {
     }
 
     // api
+    try {
+        const res = await fetch('api/contact', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
     
-
-  };
-
+        if (res.ok) {
+          const form = e.target;
+          // Resetta il form dopo l'invio riuscito
+          form.reset();
+        } else {
+            console.log('Invio non riuscito.');
+          }
+      } catch (error) {
+        console.log("Errore durante l'invio:", error);
+      }
+    };
+    
   return (
     <div className="flex h-screen flex-col justify-center px-6 py-12 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-sm">
