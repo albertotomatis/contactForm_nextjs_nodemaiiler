@@ -1,5 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
@@ -9,6 +11,7 @@ export default function ContactForm() {
   });
 
   const [errors, setErrors] = useState({});
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const validateEmail = (email) => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -99,6 +102,7 @@ export default function ContactForm() {
           const form = e.target;
           // Resetta il form dopo l'invio riuscito
           form.reset();
+          setShowSuccessToast(true); // Mostra la notifica di successo
         } else {
             console.log('Invio non riuscito.');
           }
@@ -106,6 +110,12 @@ export default function ContactForm() {
         console.log("Errore durante l'invio:", error);
       }
     };
+
+    useEffect(() => {
+        if (showSuccessToast) {
+          toast.success('Messaggio inviato.');
+        }
+      }, [showSuccessToast]);
     
   return (
     // contact form
