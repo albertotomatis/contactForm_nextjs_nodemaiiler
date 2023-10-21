@@ -1,24 +1,21 @@
 'use client';
-import { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import Link from 'next/link'; // Assicurati di importare Link da Next.js
+import { useState } from 'react';
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    message: '', // Aggiunto il campo del messaggio
+    message: '',
   });
 
   const [errors, setErrors] = useState({});
-  const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const validateEmail = (email) => {
     const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
     return emailRegex.test(email);
   };
 
+  // validazioni mentre utente digita input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
@@ -35,6 +32,16 @@ export default function ContactForm() {
       }
     }
 
+    if (name === 'message') {
+      if (!value) {
+        newErrors.message = 'Message is required';
+      } else if (value.length < 4 || value.length > 1000) {
+        newErrors.message = 'Message must be between 4 and 1000 characters'; // Updated message length
+      } else {
+        newErrors.message = '';
+      }
+    }
+
     if (name === 'email') {
       if (!value) {
         newErrors.email = 'Email is required';
@@ -48,6 +55,7 @@ export default function ContactForm() {
     setErrors(newErrors);
   };
 
+  // invio del form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -65,23 +73,22 @@ export default function ContactForm() {
       newErrors.email = 'Invalid email format';
     }
 
+    if (!formData.message) {
+      newErrors.message = 'Message is required';
+    } else if (formData.message.length < 4 || formData.message.length > 1000) {
+      newErrors.message = 'Message must be between 4 and 1000 characters'; // Updated message length
+    }
+
     setErrors(newErrors);
 
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
 
-    // Qui puoi inserire la logica per inviare il modulo, ad esempio tramite una richiesta API.
-    // Aggiungi la logica per inviare il messaggio.
+    // api
+    
 
-    setShowSuccessToast(true); // Mostra la notifica di successo
   };
-
-  useEffect(() => {
-    if (showSuccessToast) {
-      toast.success('Inviato!');
-    }
-  }, [showSuccessToast]);
 
   return (
     <div className="flex h-screen flex-col justify-center px-6 py-12 lg:px-8">
@@ -112,7 +119,7 @@ export default function ContactForm() {
           </div>
           <div>
             <label htmlFor="email" className="block text-sm font-bold leading-6 text-gray-900">
-              Email address
+              Email
             </label>
             <div className="mt-2">
               <input
@@ -136,8 +143,15 @@ export default function ContactForm() {
               <textarea
                 onChange={handleChange}
                 name="message"
+                maxLength={1000}
+                minLength={4}
                 className="block w-full rounded-md border-0 py-1.5 px-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-900 sm:text-sm sm:leading-6"
               />
+              {errors.message && (
+                <p className="text-red-400 font-bold w-fit text-sm py-1 px-3 rounded-md mt-2">
+                  {errors.message}
+                </p>
+              )}
             </div>
           </div>
           <button
@@ -146,7 +160,6 @@ export default function ContactForm() {
             Invia
           </button>
         </form>
-        
       </div>
     </div>
   );
