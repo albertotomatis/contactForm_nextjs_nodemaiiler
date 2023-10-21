@@ -36,7 +36,7 @@ export default function ContactForm() {
       if (!value) {
         newErrors.message = 'Message is required';
       } else if (value.length < 4 || value.length > 1000) {
-        newErrors.message = 'Message must be between 4 and 1000 characters'; // Updated message length
+        newErrors.message = 'Message must be between 4 and 1000 characters'; 
       } else {
         newErrors.message = '';
       }
